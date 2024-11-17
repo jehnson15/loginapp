@@ -25,7 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const IndexScreen()),
+        MaterialPageRoute(
+          builder: (context) => IndexScreen(email: email),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

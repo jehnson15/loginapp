@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class IndexScreen extends StatelessWidget {
-  const IndexScreen({super.key});
+  final String email;
+
+  const IndexScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +20,18 @@ class IndexScreen extends StatelessWidget {
               '¡Bienvenido a la aplicación!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 10),
+            Text(
+              'Has iniciado sesión como:\n$email',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 18, color: Colors.black54),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const IndexScreen()),
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Funcionalidad no implementada')),
                 );
               },
               style: ElevatedButton.styleFrom(
