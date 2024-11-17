@@ -16,9 +16,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _passwordVisible = false; // Estado para mostrar/ocultar la contraseña
-  bool _confirmPasswordVisible =
-      false; // Estado para mostrar/ocultar confirmar contraseña
+  bool _passwordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(

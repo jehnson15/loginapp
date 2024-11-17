@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginapp/services/user_database.dart';
 import 'register_screen.dart';
-import 'index_screen.dart'; // Importamos la nueva pantalla IndexScreen
+import 'index_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,7 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo opcional
               Image.asset(
                 'assets/images/logo.png',
                 height: 120,
