@@ -1,78 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:loginapp/services/user_database.dart';
 import 'register_screen.dart';
+import 'index_screen.dart'; // Importamos la nueva pantalla IndexScreen
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool _passwordVisible = false;
+
+  void _login() {
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    if (UserDatabase().loginUser(email, password)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicio de sesión exitoso')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const IndexScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Correo o contraseña incorrectos')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Center(
+      appBar: AppBar(
+        title: const Text('Iniciar sesión'),
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[300],
-                child: Icon(Icons.person, size: 30, color: Colors.grey[500]),
+              // Logo opcional
+              Image.asset(
+                'assets/images/logo.png',
+                height: 120,
+                fit: BoxFit.contain,
               ),
-              SizedBox(height: 30),
-              Text(
-                'Iniciar sesión',
+              const SizedBox(height: 30),
+              const Text(
+                'Bienvenido',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
-                decoration: InputDecoration(
+                controller: emailController,
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   hintText: 'Ingrese su correo',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
-                obscureText: true,
+                controller: passwordController,
+                obscureText: !_passwordVisible,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
                   hintText: 'Ingrese su contraseña',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: _login,
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   backgroundColor: Colors.blue,
                 ),
-                child: Text(
+                child: const Text(
                   'Iniciar sesión',
                   style: TextStyle(fontSize: 18),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterScreen(),
+                    ),
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Registrar',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  minimumSize: Size(100, 40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
                   ),
                 ),
               ),

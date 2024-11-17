@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:loginapp/services/user_database.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -14,11 +16,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  bool _passwordVisible = false; // Estado para mostrar/ocultar la contraseña
+  bool _confirmPasswordVisible =
+      false; // Estado para mostrar/ocultar confirmar contraseña
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -29,14 +35,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return false;
     }
     final emailPattern = RegExp(r'^[\w\.-]+@unah(\.edu)?\.hn$');
-    if (!_emailController.text.contains('@') ||
-        !emailPattern.hasMatch(_emailController.text)) {
+    if (!emailPattern.hasMatch(_emailController.text)) {
       _showSnackBar(
           'Ingrese un correo válido con dominio unah.edu.hn o unah.hn');
-      return false;
-    }
-    if (_emailController.text.split('@').length != 2) {
-      _showSnackBar('El correo debe contener solo una @');
       return false;
     }
     final phonePattern = RegExp(r'^[39][0-9]{7}$');
@@ -59,10 +60,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _submitForm() {
     if (_validateForm()) {
-      print('Nombre: ${_nameController.text}');
-      print('Correo: ${_emailController.text}');
-      print('Teléfono: ${_phoneController.text}');
-      print('Contraseña: ${_passwordController.text}');
+      UserDatabase().registerUser(
+        _emailController.text,
+        _passwordController.text,
+      );
+      _showSnackBar('Registro exitoso');
+      Navigator.pop(context); // Regresa a la pantalla de inicio de sesión
     }
   }
 
@@ -70,80 +73,101 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro'),
+        title: const Text('Registro'),
         backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
-          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Crear cuenta',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nombre',
                   hintText: 'Ingrese su nombre',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   hintText: 'Ingrese su correo',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: _phoneController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Teléfono',
                   hintText: 'Ingrese su teléfono',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.phone,
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: !_passwordVisible,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
                   hintText: 'Ingrese su contraseña',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                 ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: _confirmPasswordController,
-                obscureText: true,
+                obscureText: !_confirmPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Confirmar Contraseña',
                   hintText: 'Repita su contraseña',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _confirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _confirmPasswordVisible = !_confirmPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: _submitForm,
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   backgroundColor: Colors.blue,
                 ),
-                child: Text(
+                child: const Text(
                   'Registrar cuenta',
                   style: TextStyle(fontSize: 18),
                 ),
